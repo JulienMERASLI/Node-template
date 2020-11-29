@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <%- include("../partials/head") %> 
+    <title>Paramètres</title>
+    <link rel="stylesheet" type="text/css" href="/styles/forms.css" />
+    <script src="/scripts/forms/settings.js" type="module"></script>
+</head>
+<body>
+    <div id="content">
+        <header>
+            <a href="/profile" class="lefted">Profil</a>    
+            <nav>
+                <ul>
+                    <li><a href="/aide#aideParametres">Aide</a></li>
+                </ul>
+            </nav>
+        </header>
+        <h2 class="error" id="PWConfirmError" style="display: none;">Le mot de passe et la confirmation doivent correspondre</h2>
+        <form id="modifyForm">
+            <h1>Modifier les paramètres du compte</h1>
+            <div>
+                <label for="username">Pseudo:</label>
+                <input type="text" name="username" id="username" pattern="^[A-Za-z0-9]+(?:[_][A-Za-z0-9]+)*$" placeholder="<%= user.username %>" autofocus minlength="2" /><br />
+            </div>
+            <div>
+                <label for="PW">Mot de passe:</label>
+                <input type="password" name="PW" id="PW" placeholder="********" minlength="4"/>
+            </div>
+            <div>
+                <label for="PWConfirm">Confirmation du mot de passe:</label>
+                <input type="password" name="PWConfirm" id="PWConfirm" placeholder="********" minlength="4" />
+            </div>
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" name="email" id="email" placeholder="<%= user.email %>" />
+            </div>
+            <div>
+                <input type="submit" value="Valider" class="blue" />
+            </div>
+            <p><a href="/profile">Annuler</a></p>
+        </form>
+    </div>
+    <div id="overlay" class="overlay">
+        <div class="error" style="display: none;">Mot de passe erroné</div>
+        <div>
+            <p>Veuillez entrer votre ancien mot de passe</p>
+            <input type="password" id="oldPW" name="oldPW" placeholder="Ancien mot de passe" /><br />
+            <input type="submit" value="Valider" class="validate rounded" />
+        </div>
+        <button id="cancel" class="annuler rounded">Annuler</button>
+    </div>
+</body>
+</html>

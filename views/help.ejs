@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<%- include("partials/head") %> 
+	<title>Aide</title>
+	<!-- <script src="/scripts/aide.js" defer></script>
+	<link rel="stylesheet" type="text/css" href="/styles/aide.css" /> -->
+</head>
+<body>
+	<header>
+		<a href="/" class="lefted image">
+            <img src="/images/icone.png" alt="icone"/>
+		</a>
+        <nav>
+            <ul>
+                <% if (user) { %> 
+                    <li><a href="/logout">Déconnexion</a></li>
+                    <li><a href="/profile">Profil</a></li>
+                <% } else { %> 
+					<li><a href="/login">Connexion</a></li>
+					<li><a href="/register">Inscription</a></li>
+                <% } %> 
+            </ul>
+        </nav>
+	</header>
+	<div>
+		<h1>Aide</h1>
+	</div>
+	<main>
+	</main>
+</body>
+</html>

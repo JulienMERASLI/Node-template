@@ -1,0 +1,18 @@
+{
+    "permissions": [
+        "background"
+    ],
+    "name": "Editeur",
+    "short_name": "Editeur",
+    "start_url": "/?mode=standalone",
+    "display": "standalone",
+    "icons": [{
+        "src": "/images/icone.png",
+        "sizes": "512x512",
+        "type": "image/png"
+    }],
+    "background_color": "black",
+    "lang": "fr",
+    "theme_color": "white",
+    "orientation": "portrait"
+}
