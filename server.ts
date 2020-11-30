@@ -49,7 +49,7 @@ fs.mkdir(`${__dirname}/files/`).catch(err => {
 });
 
 const session = expressSession({
-	secret: "editor",
+	secret: "Phoe",
 	resave: false,
 	saveUninitialized: true,
 	cookie: {
@@ -86,7 +86,7 @@ const port = process.env.PORT || 8005;
 server.listen(port, () => console.log(`listening to port ${port}`));
 
 setInterval(() => {
-	nodeFetch("https://editor-julienmerasli.azurewebsites.net/");
+	nodeFetch("https://phoe.azurewebsites.net/");
 }, 1000 * 60 * 10);
 
 import "./controllers/accountController";

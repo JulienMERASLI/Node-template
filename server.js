@@ -62,7 +62,7 @@ fs.mkdir(__dirname + "/files/").catch(function (err) {
     };
 });
 var session = expressSession({
-    secret: "editor",
+    secret: "Phoe",
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -94,7 +94,7 @@ exports.smtpTransport = nodemailer.createTransport({
 var port = process.env.PORT || 8005;
 exports.server.listen(port, function () { return console.log("listening to port " + port); });
 setInterval(function () {
-    node_fetch_1.default("https://editor-julienmerasli.azurewebsites.net/");
+    node_fetch_1.default("https://phoe.azurewebsites.net/");
 }, 1000 * 60 * 10);
 require("./controllers/accountController");
 require("./controllers/mainController");

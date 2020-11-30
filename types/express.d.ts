@@ -10,8 +10,7 @@ declare module "express-session" {
 
 declare global {
 	namespace Express {
-		export interface Request {
-			user?: IUser;
+		export interface User extends IUser {
 		}
 	}
 }

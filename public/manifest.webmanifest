@@ -2,8 +2,8 @@
     "permissions": [
         "background"
     ],
-    "name": "Editeur",
-    "short_name": "Editeur",
+    "name": "Phoe",
+    "short_name": "Phoe",
     "start_url": "/?mode=standalone",
     "display": "standalone",
     "icons": [{
