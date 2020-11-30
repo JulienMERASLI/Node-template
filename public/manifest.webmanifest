@@ -2,17 +2,12 @@
     "permissions": [
         "background"
     ],
-<<<<<<< HEAD
     "name": "Phoe",
     "short_name": "Phoe",
-=======
-    "name": "Editeur",
-    "short_name": "Editeur",
->>>>>>> 482b9ef915927dd61b77243c48dd24dc9b73ef44
     "start_url": "/?mode=standalone",
     "display": "standalone",
     "icons": [{
-        "src": "/images/icone.png",
+        "src": "/images/icon.png",
         "sizes": "512x512",
         "type": "image/png"
     }],
