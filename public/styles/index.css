@@ -1,0 +1,28 @@
+body h1 {
+  text-align: center;
+}
+body footer {
+  position: fixed;
+  bottom: 0;
+  font-size: 20px;
+  text-align: center;
+  width: 100%;
+  left: 0;
+}
+body footer #downloads {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  min-height: 4vh;
+}
+body footer #mail {
+  margin-top: 1vh;
+  background-color: #3b01d9;
+  width: 100%;
+  text-align: center;
+  display: inline-block;
+  min-height: 5vh;
+}
+body footer #mail * {
+  color: white;
+}

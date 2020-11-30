@@ -1,0 +1,13 @@
+body button {
+  margin: 0;
+}
+body header#header {
+  max-height: none;
+}
+body main :not(header) div {
+  margin: 20px;
+  margin-top: 50px;
+}
+body main :not(header) div .links {
+  margin-top: 30px;
+}
