@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"target": "es5",
+		"jsx": "preserve",
+		"moduleResolution": "node",
+		"sourceMap": false,
+		"lib": ["es2020", "dom"],
+		"allowSyntheticDefaultImports": true,
+		"typeRoots": ["./types", "./node_modules/@types/"],
+		"plugins": [
+			{
+                "transform": "typescript-is/lib/transform-inline/transformer",
+				"ignoreClasses": true,
+				"ignoreMethods": true,
+            }
+		]
+	},
+	"exclude": [
+		"node_modules",
+		"**/node_modules/*",
+	],
+	"compileOnSave": true
+}

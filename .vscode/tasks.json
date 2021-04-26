@@ -1,0 +1,25 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "tscServer",
+			"problemMatcher": [],
+			"label": "npm: tscServer",
+			"detail": "tscServer",
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
+		},
+		{
+			"type": "npm",
+			"script": "tscClient",
+			"problemMatcher": [],
+			"label": "npm: tscClient",
+			"detail": "tscClient",
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
+		}
+	]
+}

@@ -1,0 +1,15 @@
+{
+    "name": "Template",
+    "short_name": "Template",
+    "start_url": "/?mode=standalone",
+    "display": "standalone",
+    "icons": [{
+        "src": "/images/icon.png",
+        "sizes": "288x288",
+        "type": "image/png"
+    }],
+    "background_color": "black",
+    "lang": "fr",
+    "theme_color": "white",
+    "orientation": "portrait"
+}

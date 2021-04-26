@@ -1,0 +1,111 @@
+body {
+    #searchDiv {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		#form {
+			display: flex;
+			margin: 20px;
+		}
+
+		input {
+            outline: 0px;
+            border: 1.5px solid #cacaca;
+            border-radius: 10px;
+            height: fit-content;
+            padding: 10px;
+            align-self: center;
+
+            &:focus {
+                border: #1f8dd5 solid 1.5px;
+            }
+        }
+
+		#searchResults {
+			div {
+				&.result {
+					padding: 10px;
+				}
+				display: flex;
+				width: 100%;
+				justify-content: space-evenly;
+
+				a {
+					background-color: white;
+					color: black;
+					text-decoration: underline;
+					font-size: initial;
+				}
+
+				div {
+					align-self: center;
+				}
+			}
+		}
+    }
+    
+    button {
+        margin: 0;
+    }
+    header#header {
+        max-height: none;    
+    }
+
+    main {
+        h1 {
+            text-align: center;
+        }
+
+        & > div:not(.noPadding) {
+            margin: 20px;
+            margin-top: 50px;
+            
+            .links {
+                margin-top: 30px;
+            }
+        }
+
+        #projectList {
+            padding: 0;
+            list-style-type: none;
+            .projectName {
+                padding: 10px;
+                height: 50px;
+                border: 2px solid #cacaca;
+                &:not(:last-child) {
+                    border-bottom: 0;
+                }
+
+                &:hover {
+                    .deleteButton {
+                        visibility: visible;
+                    }
+                }
+
+
+                a {
+                    font-weight: bold;
+                    text-decoration: none;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+
+            .right {
+                float: right;
+                display: flex;
+                justify-content: flex-end;
+                .actionsButton {
+                    width: 50px;
+                }
+
+                .deleteButton {
+                    font-size: 37px;
+                }
+            }
+        } 
+    }
+}
