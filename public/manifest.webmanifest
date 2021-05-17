@@ -5,7 +5,7 @@
     "display": "standalone",
     "icons": [{
         "src": "/images/icon.png",
-        "sizes": "288x288",
+        "sizes": "500x500",
         "type": "image/png"
     }],
     "background_color": "black",

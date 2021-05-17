@@ -13,10 +13,20 @@
 		},
 		{
 			"type": "npm",
-			"script": "tscClient",
+			"script": "buildClient",
 			"problemMatcher": [],
-			"label": "npm: tscClient",
-			"detail": "tscClient",
+			"label": "npm: buildClient",
+			"detail": "buildClient",
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
+		},
+		{
+			"type": "npm",
+			"script": "dev",
+			"problemMatcher": [],
+			"label": "npm: dev",
+			"detail": "dev",
 			"runOptions": {
 				"runOn": "folderOpen"
 			}

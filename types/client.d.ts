@@ -1,5 +1,5 @@
 import "typed-query-selector/strict";
-import "dom-chef";
+import React from "dom-chef";
 
 declare global {
 	interface HTMLElement {

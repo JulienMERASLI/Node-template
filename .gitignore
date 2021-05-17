@@ -118,5 +118,7 @@ dist
 files/
 
 **/*.css
-**/*.js
-!public/scripts/libraries/*.js
+public/scripts/build
+server.js
+models/**/*.js
+controllers/**/*.js

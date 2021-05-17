@@ -1,5 +1,4 @@
 /// <reference path="../../types/client.d.ts" />
-
 import { isElementVisible } from "./utilities.js";
 
 if (!navigator.onLine) {
