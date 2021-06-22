@@ -28,22 +28,22 @@
                     </ul>
                 </nav>
             </header>
-            <% if (typeof alreadyConnected !== "undefined" && alreadyConnected === true) { %> 
+            <% if (locals.alreadyConnected) { %> 
                 <h2 class="error">Vous êtes déjà connecté</h2>
             <% } %>
-            <% if (typeof PWModified !== "undefined" && PWModified === true) { %> 
+            <% if (locals.PWModified) { %> 
                 <h2 class="information">Mot de passe modifié</h2>
             <% } %>
-            <% if (typeof registered !== "undefined" && registered === true) { %> 
+            <% if (locals.registered) { %> 
                 <h2 class="information">Bienvenue, vous pouvez désormais créer votre premier projet, consultez notre <a href="/help">page d'aide</a></h2>
             <% } %>
-            <% if (typeof settingsChanged !== "undefined" && settingsChanged === true) { %> 
+            <% if (locals.settingsChanged) { %> 
                 <h2 class="information">Paramètres modifiés</a></h2>
             <% } %>
-            <% if (typeof pageNotFound !== "undefined" && pageNotFound === true) { %> 
+            <% if (locals.pageNotFound) { %> 
                 <h2 class="error">La page n'existe pas</h2>
             <% } %>
-            <% if (typeof nonExistingProject !== "undefined" && nonExistingProject === true) { %> 
+            <% if (locals.nonExistingProject) { %> 
                 <h2 class="error">Ce projet n'existe pas</h2>
             <% } %>
         </div>

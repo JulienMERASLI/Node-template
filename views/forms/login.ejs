@@ -13,16 +13,16 @@
             <img src="/images/icon.png" alt="icone"/>
         </a>
     </header>
-    <% if (typeof wrongID !== "undefined" && wrongID === true) { %> 
+    <% if (locals.wrongID) { %> 
         <h2 class="error">Pseudo ou mot de passe erroné</h2>
     <% } %>
-    <% if (typeof existingUser !== "undefined" && existingUser === true) { %> 
+    <% if (locals.existingUser) { %> 
         <h2 class="error">Cet utilisateur existe déjà, veuillez vous connecter</h2>
     <% } %>
-    <% if (typeof notConnected !== "undefined" && notConnected === true) { %> 
+    <% if (locals.notConnected) { %> 
         <h2 class="error">Veuillez vous connecter pour acceder à cette page</h2>
     <% } %>
-    <% if (typeof emailSent !== "undefined" && emailSent === true) { %> 
+    <% if (locals.emailSent) { %> 
         <h2 class="information">Un email a été envoyé avec un lien pour réinitialiser votre mot de passe</h2>
     <% } %>
 

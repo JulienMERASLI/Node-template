@@ -1,7 +1,8 @@
 {
 	"compilerOptions": {
 		"target": "es5",
-		"jsx": "preserve",
+		"jsx": "react-jsx",
+		"jsxImportSource": "preact",
 		"moduleResolution": "node",
 		"sourceMap": false,
 		"lib": ["es2020", "dom"],

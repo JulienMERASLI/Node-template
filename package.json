@@ -14,7 +14,7 @@
 		"dev": "nodemon -L --ignore 'public/' --ext 'js' server.js",
 		"tscServer": "ttsc --watch -p tsconfig.server.json",
 		"buildClient": "snowpack build --watch",
-		"postinstall": "(ttsc -p tsconfig.server.json) && (snowpack build) && (for lessfile in $(find public/styles -name '*.less'); do cssfile=$(echo $lessfile | sed 's/\\.less$/.css/i'); echo \"Compiling $lessfile to $cssfile\"; rm -f $cssfile; lessc $lessfile > $cssfile; done;)"
+		"postinstall": "(ttsc -p tsconfig.server.json) && (snowpack build) && (for lessfile in $(find public/styles -name '*.less'); do cssfile=$(echo $lessfile | sed 's/.less$/.css/i'); echo \"Compiling $lessfile to $cssfile\"; rm -f $cssfile; lessc $lessfile > $cssfile; done;)"
 	},
 	"keywords": [
 		"Template"
@@ -23,7 +23,6 @@
 	"dependencies": {
 		"async": "^3.2.0",
 		"bcryptjs": "^2.4.3",
-		"dom-chef": "^5.0.0",
 		"dotenv": "^8.2.0",
 		"ejs": "^3.1.5",
 		"express": "^4.17.1",
@@ -37,6 +36,7 @@
 		"nodemailer": "^6.4.16",
 		"passport": "^0.4.1",
 		"passport-local": "^1.0.0",
+		"preact": "^10.5.13",
 		"serve-favicon": "^2.5.0",
 		"ttypescript": "^1.5.12",
 		"typescript-is": "^0.18.2"

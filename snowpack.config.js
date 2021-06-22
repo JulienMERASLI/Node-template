@@ -1,7 +1,8 @@
 module.exports = {
-	root: "public/scripts",
+	root: "public",
+	exclude: ["**/(styles|fonts|images)/*"],
 	buildOptions: {
-		jsxInject: "import React from \"dom-chef\"",
+		jsxInject: "import { h, Fragment } from \"preact\"",
 	},
 	plugins: [
 		[
@@ -10,6 +11,6 @@ module.exports = {
 	],
 	packageOptions: {
 		polyfillNode: true,
-		knownEntrypoints: ["dom-chef"]
+		knownEntrypoints: ["preact"]
 	}
 };

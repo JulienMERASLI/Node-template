@@ -13,7 +13,7 @@
             <img src="/images/icon.png" alt="icone"/>
         </a>
     </header>
-    <% if (typeof wrongDataFormat !== "undefined" && wrongDataFormat === true) { %> 
+    <% if (locals.wrongDataFormat) { %> 
         <h2 class="error">Veuillez respecter le format des champs</h2>
     <% } %>
     <h2 class="error" id="PWConfirmError" style="display: none;">Le mot de passe et la confirmation doivent correspondre</h2>

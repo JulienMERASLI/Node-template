@@ -18,7 +18,7 @@
             </ul>
         </nav>
 	</header>
-	<% if (typeof wrongDataFormat !== "undefined" && wrongDataFormat === true) { %> 
+	<% if (locals.wrongDataFormat) { %> 
         <h2 class="error">Veuillez respecter le format des champs</h2>
     <% } %>
 	<h2 class="error" id="PwConfirmError" style="display: none;">Le mot de passe et la confirmation doivent correspondre</h2>

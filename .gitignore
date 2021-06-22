@@ -118,7 +118,9 @@ dist
 files/
 
 **/*.css
-public/scripts/build
+public/build
 server.js
 models/**/*.js
 controllers/**/*.js
+
+**/.DS_Store

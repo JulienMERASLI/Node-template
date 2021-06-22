@@ -9,7 +9,7 @@ if (window.location.href.includes("mode=standalone")) {
 if ("serviceWorker" in navigator) {
 	navigator.serviceWorker.getRegistrations()
 		.then(async regs => {
-			navigator.serviceWorker.register("/scripts/pwa_sw.js");
+			navigator.serviceWorker.register("/pwa_sw.js");
 			for (const reg of regs) {
 				reg.update();
 			}

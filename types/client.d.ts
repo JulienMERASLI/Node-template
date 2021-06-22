@@ -1,5 +1,5 @@
 import "typed-query-selector/strict";
-import React from "dom-chef";
+import { h, Fragment } from "preact";
 
 declare global {
 	interface HTMLElement {

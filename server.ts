@@ -66,7 +66,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 	.catch((err) => console.error(err));
 
 app.use(serveFavicon(`${__dirname}/public/favicon.ico`));
-app.use("/scripts", express.static(path.join(__dirname, "/public/scripts/build/")));
+app.use("/", express.static(path.join(__dirname, "/public/build/")));
 app.use(express.static(path.join(__dirname, "/public/")));
 app.set("view engine", "ejs");
 app.use(morgan("dev"));

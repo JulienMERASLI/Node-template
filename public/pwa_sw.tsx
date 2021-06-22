@@ -1,4 +1,4 @@
-/// <reference path="../../types/worker.d.ts" />`
+/// <reference path="../types/worker.d.ts" />`
 
 self.addEventListener("install", () => {
 	self.skipWaiting();

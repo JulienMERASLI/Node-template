@@ -17,10 +17,10 @@
             </ul>
         </nav>
 	</header>
-	<% if (typeof noUser !== "undefined" && noUser === true) { %> 
+	<% if (locals.noUser) { %> 
 		<h2 class="error">Aucun utilisateur n'est associé à cet email</h2>
 	<% } %>
-	<% if (typeof invalidToken !== "undefined" && invalidToken === true) { %> 
+	<% if (locals.invalidToken) { %> 
 		<h2 class="error">URL invalide</h2>
 	<% } %>
 	<form action="/forgotPW" method="POST">
