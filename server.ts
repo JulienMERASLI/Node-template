@@ -97,7 +97,7 @@ setInterval(() => {
 	nodeFetch("https://template.azurewebsites.net/").catch(err => err);
 }, 1000 * 60 * 10);
 
-import { notConnected } from "./controllers/middlewares";
+import { notConnected } from "./controllers/helpers";
 import "./controllers/accountController";
 import "./controllers/mainController";
 

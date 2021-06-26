@@ -1,53 +1,22 @@
 /// <reference path="../types/server.d.ts" />
 
-import * as fs from "fs/promises";
-import { existsSync as exists } from "fs";
 import * as passport from "passport";
-import * as crypto from "crypto";
 import * as bcrypt from "bcryptjs";
-import async from "async";
-import * as Joi from "joi";
-import { app, smtpTransport } from "../server";
+import { app } from "../server";
 import { User } from "../models/accounts/userSchemaModel";
-
+import { alreadyConnected, notConnected, render } from "./helpers";
 import "../models/accounts/passportModel";
-import { resetPW, forgotPW } from "../models/accounts/mailsResetPW";
-import { alreadyConnected, getMessages, notConnected } from "./middlewares";
+import { createFolders, createUser, validateForm } from "../models/accounts/registration";
+import { modifySettings } from "../models/accounts/modifySettings";
+import { assignNewPWAndRemoveToken, assignTokenToUser, generateToken, sendForgotPWMail, sendResetPWMail, userExists } from "../models/accounts/resetPW";
 
 app.get("/login", alreadyConnected, (req, res) => {
-	const params = {};
-	getMessages(req, params);
-	res.render("forms/login", params);
-});
-
-app.get("/register", alreadyConnected, (req, res) => {
-	const params = {};
-	getMessages(req, params);
-	res.render("forms/register", params);
-});
-
-app.get("/forgotPW", alreadyConnected, (req, res) => {
-	const params = {};
-	getMessages(req, params);
-	res.render("forms/forgotPW", params);
-});
-
-app.get("/resetPW/:token", alreadyConnected, async (req, res) => {
-	const user = await User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }).exec();
-	if (!user) {
-		req.session.messages.push("invalidToken");
-		return res.redirect("/forgotPW");
-	}
-	res.render("forms/resetPW", { token: req.params.token });
-});
-
-app.get("/logout", (req, res) => {
-	req.logout();
-	res.redirect("/login");
-});
-
-app.get("/settings", notConnected, (req, res) => {
-	res.render("forms/settings", { user: req.user, url: "/settings" });
+	render(req, res, {
+		title: "Connexion",
+		css: "forms",
+		js: "forms/login",
+		options: {},
+	});
 });
 
 app.post("/connected", (req, res, next) => {
@@ -62,64 +31,62 @@ app.post("/connected", (req, res, next) => {
 	res.redirect(redirect);
 });
 
-app.post("/registered", async (req, res) => {
-	const userSchema = Joi.object({
-		username: Joi.string()
-			.pattern(/^[A-Za-z0-9]+(?:[_][A-Za-z0-9]+)*$/)
-			.min(2)
-			.required(),
-		PW: Joi.string()
-			.min(4)
-			.required(),
-		email: Joi.string()
-			.email()
-			.required(),
+app.get("/register", alreadyConnected, (req, res) => {
+	render(req, res, {
+		title: "Inscription",
+		css: "forms",
+		js: "forms/register",
+		options: {},
 	});
+});
+
+app.post("/registered", async (req, res) => {
 	try {
-		await userSchema.validateAsync(req.body, { allowUnknown: true });
-		const user = new User({ username: req.body.username, PW: req.body.PW, email: req.body.email });
-		const doc = await User.find({ username: user.username }).exec();
-		if (doc.length) {
-			req.session.messages.push("existingUser");
-			return res.redirect("/login");
-		}
-		if ((await User.find({ email: user.email }).exec())[0]) {
-			req.session.messages.push("existingUser");
-			return res.redirect("/login");
-		}
+		validateForm(req.body);
+		const user = await createUser(req.body, req, res);
+		if (typeof user !== "undefined") {
+			await createFolders(user);
 
-		await user.save();
-		let dirname: string | string[] = __dirname.split("/");
-		dirname.pop();
-		dirname = dirname.join("/");
-		await fs.mkdir(`${dirname}/files/${user.username}`);
-
-		req.login(user, error => {
-			if (error) console.error(error);
-			req.session.messages.push("registered");
-			req.session.save();
-			return res.redirect("/profile");
-		});
+			req.login(user, error => {
+				if (error) console.error(error);
+				req.session.messages.push("registered");
+				req.session.save();
+				return res.redirect("/profile");
+			});
+		}
 	}
-	catch (e) {
+	catch (err) {
+		console.log(err);
 		req.session.messages.push("wrongDataFormat");
 		req.session.save();
 		return res.redirect("/register");
 	}
 });
 
+app.get("/logout", (req, res) => {
+	req.logout();
+	res.redirect("/login");
+});
+
+app.get("/settings", notConnected, (req, res) => {
+	render(req, res, {
+		title: "Paramètres",
+		css: "forms",
+		js: "forms/settings",
+		options: {
+			user: req.user,
+		},
+	});
+});
+
 app.patch("/settings", notConnected, async (req, res) => {
 	const oldUser = req.user;
 	const newUser = req.body;
-	if (newUser.username && oldUser.username !== newUser.username) {
-		if (exists(`./files/${oldUser.username}/`)) {
-			await fs.rename(`./files/${oldUser.username}/`, `./files/${newUser.username}/`);
-		}
+	try {
+		await modifySettings(oldUser, newUser);
+	} catch {
+		res.status(400).send();
 	}
-	Object.keys(req.body).forEach(elem => {
-		oldUser[elem] = req.body[elem];
-	});
-	await oldUser.save();
 	res.status(200).send();
 	req.session.messages.push("settingsChanged");
 	req.session.save();
@@ -133,9 +100,30 @@ app.post("/verifyPW", notConnected, async (req, res) => {
 });
 
 app.get("/forgotPW", alreadyConnected, (req, res) => {
-	const params = {};
-	getMessages(req, params);
-	res.render("forms/forgotPW", params);
+	render(req, res, {
+		title: "Mot de passe oublié",
+		css: "forms",
+		js: "forms/forgotPW",
+		options: {},
+	});
+});
+
+app.post("/forgotPW", async (req, res) => {
+	try {
+		const token = await generateToken();
+		const user = await User.findOne({ email: req.body.email }).exec();
+		if (!userExists(user, req)) {
+			return res.redirect("/forgotPW");
+		}
+
+		await assignTokenToUser(user, token);
+
+		await sendForgotPWMail(user, token, req);
+		return res.redirect("/login");
+	} catch (err) {
+		if (err) console.error(err);
+		res.redirect("/forgotPW");
+	}
 });
 
 app.get("/resetPW/:token", alreadyConnected, async (req, res) => {
@@ -144,80 +132,33 @@ app.get("/resetPW/:token", alreadyConnected, async (req, res) => {
 		req.session.messages.push("invalidToken");
 		return res.redirect("/forgotPW");
 	}
-	res.render("forms/resetPW", { token: req.params.token });
-});
-
-app.post("/forgotPW", (req, res) => {
-	async.waterfall([
-		(done) => {
-			crypto.randomBytes(20, (err, buf) => {
-				const token = buf.toString("hex");
-				done(err, token);
-			});
-		},
-		async (token, done) => {
-			const user = await User.findOne({ email: req.body.email }).exec();
-			if (!user) {
-				req.session.messages.push("noUser");
-				req.session.save();
-				return res.redirect("/forgotPW");
-			}
-
-			user.resetPasswordToken = token;
-			user.resetPasswordExpires = Date.now() + 3600000;
-
-			const error = await user.save();
-			done(error instanceof Error ? error : null, token, user);
-		},
-		async (token, user, done) => {
-			const mailOptions = {
-				...forgotPW(req.headers.host, token),
-				to: user.email,
-			};
-			const err = await smtpTransport.sendMail(mailOptions);
-			if (err instanceof Error) return done(err, "done");
-			req.session.messages.push("emailSent");
-			return res.redirect("/login");
-		},
-	], (err) => {
-		if (err) console.error(err);
-		res.redirect("/forgotPW");
+	render(req, res, {
+		title: "Réinitialisation du mot de passe",
+		css: "forms",
+		js: "forms/resetPW",
+		options: { token: req.params.token },
 	});
 });
 
-app.post("/resetPW/:token", (req, res) => {
+app.post("/resetPW/:token", async (req, res) => {
 	if (req.body.PW.length < 4) {
 		req.session.messages.push("wrongDataFormat");
 		req.session.save();
 		return res.redirect("/resetPW");
 	}
-	async.waterfall([
-		async (done) => {
-			const user = await User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }).exec();
-			if (!user) {
-				req.session.messages.push("invalidToken");
-				return res.redirect("/forgotPW");
-			}
-			user.PW = req.body.PW;
-			user.resetPasswordToken = undefined;
-			user.resetPasswordExpires = undefined;
-			await user.save();
-			req.login(user, (error) => {
-				done(error, user);
-			});
-		},
-		async (user, done) => {
-			const mailOptions = {
-				...resetPW,
-				to: user.email,
-			};
-			const err = await smtpTransport.sendMail(mailOptions);
-			if (err instanceof Error) return done(err, "done");
-			req.session.messages.push("PWModified");
+	try {
+		const user = await User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }).exec();
+		if (!user) {
+			req.session.messages.push("invalidToken");
+			return res.redirect("/forgotPW");
+		}
+		await assignNewPWAndRemoveToken(user, req.body.PW);
+		req.login(user, async () => {
+			await sendResetPWMail(user, req);
 			return res.redirect("/profile");
-		},
-	], (err) => {
-		if (err) console.error(err);
+		});
+	} catch (err) {
+		console.error(err);
 		res.redirect("/login");
-	});
+	}
 });

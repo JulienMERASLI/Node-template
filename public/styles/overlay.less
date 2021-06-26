@@ -14,7 +14,7 @@ body {
             z-index: 10000;
         }
 
-        .overlay, &.overlay {
+        .overlay {
         	.no-user-select();
             position: fixed;
             left: 50%;
@@ -31,16 +31,20 @@ body {
             transition: 150ms ease-in-out;
 			width: max-content;
 
-            .inputContainer {
-                display: flex;
-                flex-direction: column;
-            }
-
             &.visible {
                 opacity: 1;
                 z-index: 10;
                 transform: translate(-50%, -50%) scale(1);
                 transition: 150ms ease-in-out;
+            }
+
+            .headingTag {
+                white-space: pre-wrap;
+            }
+
+            .inputContainer {
+                display: flex;
+                flex-direction: column;
             }
 
             input, select {

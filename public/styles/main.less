@@ -24,16 +24,18 @@
 body {
     margin: 0;
 
-    .inlineButton {
-		visibility: hidden;
-		font-weight: normal;
-	}
+    #loadingDiv {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-    .behindOverlay {
-        opacity: 0.5;
-        pointer-events: none;
+        p {
+            text-align: center;
+        }
     }
-    
+
     header {
         background-color: #dcdcdca8;
         display: flex;
@@ -92,13 +94,23 @@ body {
         }
     }
 
+
+    .inlineButton {
+		visibility: hidden;
+		font-weight: normal;
+	}
+
+    .behindOverlay {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
     .blue:extend(body header a) {
         font-size: larger;
     }
 
     .error {
         color: red;
-        font-size: 23px;
         animation-name: inAndOut;
         animation-delay: 0s;
         animation-iteration-count: 3;
@@ -107,12 +119,10 @@ body {
 
     .warning {
         color: #d9c301;
-        font-size: 20px;
     }
 
     .information {
         color: #01d925;
-        font-size: 20px;
         a {
             color: inherit;
         }
@@ -120,10 +130,6 @@ body {
 
     a, a:visited:not(.blue) {
         color: black;
-    }
-
-    #infos {
-        display: none;
     }
 }
 

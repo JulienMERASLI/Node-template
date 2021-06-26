@@ -1,35 +1,32 @@
-const changeConnectionType = document.querySelector("button#changeConnectionType");
+import { useState } from "preact/hooks";
+import { JSX } from "preact/jsx-runtime";
+import { Email, PW, Username, Validate } from "../sharedComponents/formsElements";
+import { NotConnectedHeader } from "../sharedComponents/header";
+import { ErrorMessage, InformationMessage } from "../sharedComponents/messages";
 
-changeConnectionType.onclick = (e) => {
-	if (e) {
-		e.preventDefault();
+export default function Login(errors: Record<string, unknown>): JSX.Element {
+	const [connectWithUsername, setConnect] = useState(localStorage.getItem("preferedConnection") === "username");
+	function setConnectionMethod() {
+		setConnect(!connectWithUsername);
+		localStorage.setItem("preferedConnection", connectWithUsername === true ? "email" : "username");
 	}
-	let input = document.querySelector("input#username");
-	if (input) {
-		const label: HTMLLabelElement = document.querySelector(`label[for=${input.id}`);
-		input.setAttribute("name", "email");
-		input.setAttribute("id", "email");
-		input.setAttribute("type", "email");
-		label.htmlFor = "email";
-		label.innerText = "Email:";
-		changeConnectionType.innerText = changeConnectionType.innerText.replace("l'email", "le pseudo");
-		sessionStorage.setItem("preferedConnection", "email");
-	}
-	else {
-		input = document.querySelector("input#email");
-		const label: HTMLLabelElement = document.querySelector(`label[for=${input.id}`);
-		input.setAttribute("name", "username");
-		input.setAttribute("id", "username");
-		input.setAttribute("type", "text");
-		label.htmlFor = "username";
-		label.innerText = "Pseudo:";
-		changeConnectionType.innerText = changeConnectionType.innerText.replace("le pseudo", "l'email");
-		sessionStorage.setItem("preferedConnection", "pseudo");
-	}
-};
-
-if (sessionStorage.getItem("preferedConnection") === "email") {
-	changeConnectionType.onclick(null);
-	const error = document.querySelector("h2.error");
-	if (error) error.innerText = error.innerText.replace("Pseudo", "Email");
+	return (<>
+		<NotConnectedHeader></NotConnectedHeader>
+		{errors.wrongID && <ErrorMessage>Pseudo ou mot de passe erroné</ErrorMessage>}
+		{errors.existingUser && <ErrorMessage>Cet utilisateur existe déjà, veuillez vous connecter</ErrorMessage>}
+		{errors.notConnected && <ErrorMessage>Veuillez vous connecter pour acceder à cette page</ErrorMessage>}
+		{errors.emailSent && <InformationMessage>Un email a été envoyé avec un lien pour réinitialiser votre mot de passe</InformationMessage>}
+		<form action="/connected" method="POST">
+			<h1>Se connecter</h1>
+			<div>
+				<button type="button" id="changeConnectionType" class="blue" onClick={() => setConnectionMethod()}>Se connecter avec {connectWithUsername === true ? "l'email" : "le pseudo"}</button>
+			</div>
+			{connectWithUsername ? <Username /> : <Email />}
+			<PW />
+			<Validate />
+			<p><a href="/forgotPW">Mot de passe oublié</a></p>
+			<p>C'est votre première fois ici? <a href="/register">S'inscrire</a></p>
+		</form>
+	</>
+	);
 }

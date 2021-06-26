@@ -1,13 +1,27 @@
 import * as fs from "fs/promises";
 import { app } from "../server";
-import { notConnected, getMessages } from "./middlewares";
+import { isInQuery, notConnected, render } from "./helpers";
 
 app.get("/", (req, res) => {
-	res.render("index", { user: req.user, url: "" });
+	render(req, res, {
+		title: "Template",
+		css: "index",
+		js: "index/index",
+		options: {
+			user: req.user,
+		},
+	});
 });
 
 app.get("/help", (req, res) => {
-	res.render("help", { user: req.user });
+	render(req, res, {
+		title: "Aide",
+		css: "help",
+		js: "help/help",
+		options: {
+			user: req.user,
+		},
+	});
 });
 
 app.get("/profile", notConnected, async (req, res) => {
@@ -15,14 +29,18 @@ app.get("/profile", notConnected, async (req, res) => {
 		user: req.user,
 		projects: [],
 		url: req.path.split("/")[1],
+		settingsChanged: isInQuery(req, "settingsChanged"),
 	};
-
-	getMessages(req, params);
 
 	const projects = (await fs.readdir(`./files/${req.user.username}/projects`))
 		.map(name => name.slice(0, -8));
 
 	params.projects = projects;
 
-	res.render("profile", params);
+	render(req, res, {
+		title: "Profil",
+		css: "profile",
+		js: "profile/profile",
+		options: params,
+	});
 });

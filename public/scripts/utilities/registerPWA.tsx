@@ -1,10 +1,4 @@
-import { alert } from "./dialogs.js";
-
-if (window.location.href.includes("mode=standalone")) {
-	const mail = document.getElementById("mail");
-	mail.style.height = `${document.querySelector("footer").offsetHeight}px`;
-	mail.style.marginTop = "0";
-}
+import { Ref } from "preact/hooks";
 
 if ("serviceWorker" in navigator) {
 	navigator.serviceWorker.getRegistrations()
@@ -18,17 +12,14 @@ if ("serviceWorker" in navigator) {
 }
 
 let deferredPrompt;
-const addBtn = document.getElementById("installPwa");
-if (addBtn) {
-	addBtn.onclick = async () => {
-		await alert("L'application est déjà installée sur votre appareil !");
-	};
-
+export function registerPWA(installLink: Ref<HTMLElement>): void {
+	installLink.current.style.display = "none";
 	window.addEventListener("beforeinstallprompt", (e) => {
 		e.preventDefault();
 		deferredPrompt = e;
+		installLink.current.style.display = "block";
 
-		addBtn.onclick = () => {
+		installLink.current.onclick = () => {
 			deferredPrompt.prompt();
 			deferredPrompt.userChoice.then(() => {
 				deferredPrompt = null;

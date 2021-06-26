@@ -1,87 +1,72 @@
-import { fetchPOST } from "../fetch.js";
-import { showOverlay } from "../overlay.js";
+import { createContext } from "preact";
+import { StateUpdater, useRef, useState } from "preact/hooks";
+import { JSX } from "preact/jsx-runtime";
+import { IUser } from "../../../models/accounts/userSchemaModel";
+import { Email, PWConfirmError, PWWithConfirm, Username, Validate } from "../sharedComponents/formsElements";
+import { ConnectedHeader } from "../sharedComponents/header";
+import { ErrorMessage } from "../sharedComponents/messages";
+import { Overlay, OverlayContainer, OverlayContext } from "../sharedComponents/overlay";
+import { areSettingsModified, verifyPWAndSendNewParams } from "../forms/settingsValidator.js";
+import { createDialogsState, DialogsStateContext } from "../utilities/dialogs";
+import { Dialogs } from "../sharedComponents/dialogs";
 
-window.onload = () => {
-	const form = document.getElementById("modifyForm");
+export const ConfirmPWOverlayVisibleContext = createContext<OverlayContext>({
+	visible: false,
+	setVisible: () => true,
+});
 
-	function getAllInputs() {
-		const body = {};
+export const PWMatchContext = createContext<StateUpdater<boolean>>(() => true);
 
-		Array.from(form.getElementsByTagName("input")).forEach(input => {
-			if (input.type === "submit") return;
-			if (input.value === null || input.value === "") return;
-			body[input.name] = input.value;
-		});
+export default function Settings({ user }: { user: IUser }): JSX.Element {
+	const form = useRef<HTMLFormElement>(null);
+	const PWConfirmErrorRef = useRef<HTMLHeadingElement>(null);
+	const [confirmPWOverlayVisible, setConfirmPWOverlayVisible] = useState(false);
+	const [PWMatch, setPWMatch] = useState(false);
+	const [existingUserErrorVisible, setExistingUserErrorVisible] = useState(false);
+	const dialogsState = createDialogsState();
 
-		return body;
-	}
+	return (
+		<DialogsStateContext.Provider value={dialogsState}>
+			<ConfirmPWOverlayVisibleContext.Provider value={{
+				visible: confirmPWOverlayVisible,
+				setVisible: setConfirmPWOverlayVisible,
+			}}>
+				<main>
+					<ConnectedHeader />
+					<PWConfirmError ref={PWConfirmErrorRef} />
+					<ErrorMessage style={{ display: existingUserErrorVisible ? "block" : "none" }}>Cet utilisateur existe déjà, veuillez modifier votre pseudo ou votre email.</ErrorMessage>
+					<PWMatchContext.Provider value={setPWMatch}>
+						<form id="modifyForm" ref={form}>
+							<h1>Modifier les paramètres du compte</h1>
+							<Username isRequired={false} placeholder={user.username} />
+							<PWWithConfirm isRequired={false} form={form} errorMessage={PWConfirmErrorRef} placeholder={true} />
+							<Email isRequired={false} placeholder={user.email} />
+							<Validate onClick={() => PWMatch && areSettingsModified(form) && setConfirmPWOverlayVisible(true)} />
+							<p><a href="/profile">Annuler</a></p>
+						</form>
+					</PWMatchContext.Provider>
+				</main>
+				<OverlayContainer>
 
-	window.onbeforeunload = (e) => {
-		if (Object.keys(getAllInputs()).length > 0) {
-			e.preventDefault();
-			e.returnValue = "";
-		}
-	};
-
-	form.onsubmit = (e) => {
-		e.preventDefault();
-
-		const PW = document.querySelector("input#PW");
-		const PWConfirm = document.querySelector("input#PWConfirm");
-		if (PW.value !== PWConfirm.value) {
-			e.preventDefault();
-			document.querySelector("h2#PWConfirmError").style.display = "block";
-			return false;
-		}
-		document.querySelector("h2#PWConfirmError").style.display = "none";
-
-		const body = getAllInputs();
-
-		if (Object.keys(body).length > 0) {
-			const overlay = document.getElementById("overlay");
-			const main = document.querySelector("main");
-
-			const error = overlay.getElementsByClassName("error")[0] as HTMLElement;
-			error.style.display = "none";
-
-			const oldPW = document.querySelector("input#oldPW");
-			oldPW.focus();
-
-			showOverlay("confirmPWOverlay", main, false, () => {
-				fetchPOST("/verifyPW", {
-					PW: oldPW.value,
-				})
-					.then(res => {
-						if (res.ok) {
-							return res.json();
-						}
-						error.innerText = "Une erreur inattendue s'est produite. Veuillez réessayer plus tard";
-						error.style.display = "block";
-						oldPW.value = "";
-					})
-					.then(value => {
-						if (value === true) {
-							fetchPOST("/settings", body)
-								.then((res) => {
-									if (res.ok) {
-										console.log(res.status, res.statusText);
-										window.onbeforeunload = null;
-										window.location.href = "/profile";
-									}
-									else {
-										error.innerText = "Une erreur inattendue s'est produite. Veuillez réessayer plus tard";
-										error.style.display = "block";
-										PW.value = "";
-									}
-								});
-						}
-						else if (error.style.display === "none") {
-							error.innerText = "Mot de passe erroné";
-							error.style.display = "block";
-							oldPW.value = "";
-						}
-					});
-			});
-		}
-	};
-};
+					<Overlay
+						id="confirmPWOverlay"
+						title="Veuillez entrer votre ancien mot de passe"
+						level={3}
+						validateOnClick={overlay => verifyPWAndSendNewParams(dialogsState, overlay, setConfirmPWOverlayVisible, setExistingUserErrorVisible)}
+						closeOnValidate={false}
+						beforeOpening={(overlay) => {
+							const error = overlay.querySelector(".error") as HTMLHeadingElement;
+							error.style.display = "none";
+						}}
+						context={ConfirmPWOverlayVisibleContext}>
+						<ErrorMessage level={4} style={{ display: "none" }}>Mot de passe erroné</ErrorMessage>
+						<div class="inputContainer">
+							<input type="password" id="oldPW" name="oldPW" placeholder="Ancien mot de passe" />
+						</div>
+					</Overlay>
+					<Dialogs />
+				</OverlayContainer>
+			</ConfirmPWOverlayVisibleContext.Provider>
+		</DialogsStateContext.Provider>
+	);
+}

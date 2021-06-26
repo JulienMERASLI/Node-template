@@ -8,6 +8,12 @@ declare module "express-session" {
 	}
 }
 
+interface RenderParams {
+	title: string;
+	css: string;
+	js: string;
+	options: Record<string, unknown>;
+}
 declare global {
 	namespace Express {
 		export interface User extends IUser {
