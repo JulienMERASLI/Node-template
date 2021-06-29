@@ -5,12 +5,11 @@ import { checkResponse } from "../utilities/fetch";
 
 export const ProjectItem = ({ name }: { name: string }): JSX.Element => {
 	const projectListItem = useRef(null);
-	const dialogsState = useContext(DialogsStateContext);
 	name = decodeURIComponent(name);
 
 	async function deleteProject() {
-		if (await confirm(dialogsState, "Voulez-vous vraiment supprimer ce projet?\nCette action est irréversible")) {
-			loading(dialogsState, () => {
+		if (await confirm("Voulez-vous vraiment supprimer ce projet?\nCette action est irréversible")) {
+			loading(() => {
 				fetch("/deleteProject", {
 					method: "DELETE",
 					headers: {
@@ -20,9 +19,9 @@ export const ProjectItem = ({ name }: { name: string }): JSX.Element => {
 						name,
 					}),
 				})
-					.then(async res => checkResponse(dialogsState, res, async () => {
+					.then(async res => checkResponse(res, async () => {
 						console.log(res.status, res.statusText);
-						await alert(dialogsState, "Supprimé");
+						await alert("Supprimé");
 						projectListItem.current.remove();
 					}));
 			});

@@ -16,15 +16,7 @@ export type OverlayContext = {
 	setVisible: StateUpdater<boolean>;
 }
 
-export const OverlayContainerVisibleContext = createContext<{
-	setOverlayContainerVisible: StateUpdater<boolean>,
-	numberOfOverlayVisible: number,
-	setNumberOfOverlayVisible: StateUpdater<number>
-}>({
-	setOverlayContainerVisible: () => true,
-	numberOfOverlayVisible: 0,
-	setNumberOfOverlayVisible: () => 0,
-});
+export const OverlayContainerVisibleContext = createContext<StateUpdater<boolean>>(() => true);
 
 type OverlayProps = {
 	id: string;
@@ -44,10 +36,9 @@ type OverlayProps = {
 
 export const OverlayContainer: FunctionComponent = ({ children }) => {
 	const [overlayContainerVisible, setOverlayContainerVisible] = useState(false);
-	const [numberOfOverlayVisible, setNumberOfOverlayVisible] = useState(0);
 
 	return (
-		<OverlayContainerVisibleContext.Provider value={{ setOverlayContainerVisible, numberOfOverlayVisible, setNumberOfOverlayVisible }}>
+		<OverlayContainerVisibleContext.Provider value={setOverlayContainerVisible}>
 			<div id="overlay" class={classNames({ visible: overlayContainerVisible })}>
 				{children}
 			</div>
@@ -70,7 +61,7 @@ export const Overlay: FunctionComponent<OverlayProps> = ({
 	noValidate = false,
 	beforeOpening = () => true,
 	context }) => {
-	const { setOverlayContainerVisible, numberOfOverlayVisible, setNumberOfOverlayVisible } = useContext(OverlayContainerVisibleContext);
+	const setOverlayContainerVisible = useContext(OverlayContainerVisibleContext);
 	let visible: boolean;
 	let setVisible: StateUpdater<boolean>;
 	if (typeof context === "string") {
@@ -83,31 +74,29 @@ export const Overlay: FunctionComponent<OverlayProps> = ({
 	const overlay = useRef<HTMLDivElement>(null);
 	const HeadingTag = `h${level}`as "h2";
 
-	function toggleVisible(newVisible = visible) {
-		const newValue = Math.max(0, newVisible ? numberOfOverlayVisible + 1 : numberOfOverlayVisible - 1);
-		setNumberOfOverlayVisible(newValue);
-		if (newValue === 0 || newVisible) {
-			setOverlayContainerVisible(newVisible);
-			document.querySelector("main").classList.toggle("behindOverlay", newVisible);
-			document.body.style.overflow = newVisible ? "hidden" : "auto";
+	function toggleVisible() {
+		const numberOfOverlayVisible = document.querySelectorAll(".overlay.visible").length;
+		if (numberOfOverlayVisible === 0 || visible) {
+			setOverlayContainerVisible(visible);
+			document.querySelector("main").classList.toggle("behindOverlay", visible);
+			document.body.style.overflow = visible ? "hidden" : "auto";
 		}
 	}
 	useEffect(() => {
-		if (visible || numberOfOverlayVisible > 0) toggleVisible();
+		const numberOfOverlayVisible = document.querySelectorAll(".overlay.visible").length;
+		if (visible || numberOfOverlayVisible >= 0) toggleVisible();
 	}, [visible]);
 
 	function validateClickHandler() {
 		validateOnClick(overlay.current);
 		if (closeOnValidate) {
 			setVisible(false);
-			toggleVisible(false);
 		}
 	}
 
 	function cancelClickHandler() {
 		cancelOnClick(overlay.current);
 		setVisible(false);
-		toggleVisible(false);
 	}
 
 	useEffect(() => {

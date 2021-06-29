@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
-import { closeAlert, closeConfirm, closePrompt, DialogsStateContext } from "../utilities/dialogs";
+import { closeAlert, closeConfirm, closePrompt, createDialogsState, DialogsState, DialogsStateContext } from "../utilities/dialogs";
 import { Overlay } from "./overlay";
 
 const Alert = (): JSX.Element => {
@@ -32,9 +32,13 @@ const Loading = (): JSX.Element => (<Overlay id={"loading"} classes={["dialog"]}
 	<img src="/images/loading.gif" alt="Loading" />
 </Overlay>);
 
-export const Dialogs = (): JSX.Element => (<>
-	<Alert />
-	<Prompt />
-	<Confirm />
-	<Loading />
-</>);
+export let dialogsState: DialogsState;
+export const Dialogs = (): JSX.Element => {
+	dialogsState = createDialogsState();
+	return (<DialogsStateContext.Provider value={dialogsState}>
+		<Alert />
+		<Prompt />
+		<Confirm />
+		<Loading />
+	</DialogsStateContext.Provider>);
+};

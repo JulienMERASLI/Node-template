@@ -1,5 +1,4 @@
 import { Ref, StateUpdater } from "preact/hooks";
-import { DialogsState } from "../utilities/dialogs.js";
 import { fetchPOST } from "../utilities/fetch.jsx";
 
 let form: HTMLFormElement;
@@ -39,12 +38,12 @@ function errorHappened(error: HTMLHeadingElement, PW: HTMLInputElement, errorTex
 	return errorText;
 }
 
-export async function verifyPWAndSendNewParams(dialogsState: DialogsState, overlay: HTMLDivElement, setConfirmPWOverlayVisible: StateUpdater<boolean>, setExistingUserErrorVisible: StateUpdater<boolean>): Promise<void> {
+export async function verifyPWAndSendNewParams(overlay: HTMLDivElement, setConfirmPWOverlayVisible: StateUpdater<boolean>, setExistingUserErrorVisible: StateUpdater<boolean>): Promise<void> {
 	const error = overlay.querySelector(".error") as HTMLHeadingElement;
 	const body = getAllInputs();
 	const oldPW = document.querySelector("input#oldPW");
 
-	fetchPOST(dialogsState, "/verifyPW", {
+	fetchPOST("/verifyPW", {
 		PW: oldPW.value,
 	})
 		.then(res => {

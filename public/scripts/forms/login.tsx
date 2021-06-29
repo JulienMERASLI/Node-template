@@ -5,7 +5,8 @@ import { NotConnectedHeader } from "../sharedComponents/header";
 import { ErrorMessage, InformationMessage } from "../sharedComponents/messages";
 
 export default function Login(errors: Record<string, unknown>): JSX.Element {
-	const [connectWithUsername, setConnect] = useState(localStorage.getItem("preferedConnection") === "username");
+	const preferedConnection = localStorage.getItem("preferedConnection");
+	const [connectWithUsername, setConnect] = useState(preferedConnection ? preferedConnection === "username" : true);
 	function setConnectionMethod() {
 		setConnect(!connectWithUsername);
 		localStorage.setItem("preferedConnection", connectWithUsername === true ? "email" : "username");

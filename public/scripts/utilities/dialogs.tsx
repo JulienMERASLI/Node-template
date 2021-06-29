@@ -1,14 +1,15 @@
 import { createContext } from "preact";
 import { StateUpdater, useState } from "preact/hooks";
+import { dialogsState } from "../sharedComponents/dialogs";
 
 const contextNames = ["alertVisible", "alertText", "promptVisible", "promptText", "promptDefaultValue", "confirmVisible", "confirmText", "loadingVisible"] as const;
 type ContextNames = typeof contextNames[number];
 type InferFromName<T extends string> = T extends `${string}Visible` ? boolean : string
 
 export type DialogsState = {
-	[T in ContextNames]: {
-		value: InferFromName<T>,
-		setValue: StateUpdater<InferFromName<T>>
+	[K in ContextNames]: {
+		value: InferFromName<K>,
+		setValue: StateUpdater<InferFromName<K>>
 	}
 }
 
@@ -26,7 +27,7 @@ export function createDialogsState(): DialogsState {
 }
 
 export let closeAlert: () => void;
-export function alert(dialogsState: DialogsState, message: unknown = ""): Promise<void> {
+export function alert(message: unknown = ""): Promise<void> {
 	return new Promise(resolve => {
 		dialogsState.alertText.setValue(message.toString());
 		dialogsState.alertVisible.setValue(true);
@@ -35,7 +36,7 @@ export function alert(dialogsState: DialogsState, message: unknown = ""): Promis
 }
 
 export let closePrompt: (value: string) => void;
-export function prompt(dialogsState: DialogsState, message: unknown = "", defaultValue: unknown = ""): Promise<string> {
+export function prompt(message: unknown = "", defaultValue: unknown = ""): Promise<string> {
 	return new Promise(resolve => {
 		dialogsState.promptText.setValue(message.toString());
 		dialogsState.promptDefaultValue.setValue(defaultValue.toString());
@@ -45,7 +46,7 @@ export function prompt(dialogsState: DialogsState, message: unknown = "", defaul
 }
 
 export let closeConfirm: (value: boolean) => void;
-export function confirm(dialogsState: DialogsState, message: unknown = ""): Promise<boolean> {
+export function confirm(message: unknown = ""): Promise<boolean> {
 	return new Promise(resolve => {
 		dialogsState.confirmText.setValue(message.toString());
 		dialogsState.confirmVisible.setValue(true);
@@ -53,7 +54,7 @@ export function confirm(dialogsState: DialogsState, message: unknown = ""): Prom
 	});
 }
 
-export async function loading(dialogsState: DialogsState, cb: () => void): Promise<void> {
+export async function loading(cb: () => void): Promise<void> {
 	dialogsState.loadingVisible.setValue(true);
 	await Promise.resolve(cb());
 	dialogsState.loadingVisible.setValue(false);
