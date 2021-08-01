@@ -120,6 +120,7 @@ files/
 **/*.css
 public/build
 server.js
+prerender.js
 models/**/*.js
 controllers/**/*.js
 

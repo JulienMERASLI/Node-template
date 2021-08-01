@@ -1,9 +1,0 @@
-{
-	"files.exclude": {
-		"**/*.css": true,
-		"server.js": true,
-		"models/**/*.js": true,
-		"controllers/**/*.js": true,
-	},
-	"discord.enabled": true
-}

@@ -1,9 +1,0 @@
-{
-	"extends": "../tsconfig.json",
-	"compilerOptions": {
-		"module": "es2015",
-		"target": "es2015",
-		"jsx": "react",
-		"typeRoots": ["../types", "../node_modules/@types/"],
-	}
-}

@@ -1,46 +1,19 @@
 import * as fs from "fs/promises";
 import { app } from "../server";
-import { isInQuery, notConnected, render } from "./helpers";
+import { isInQuery, notConnected, setResParams } from "./helpers";
 
-app.get("/", (req, res) => {
-	render(req, res, {
-		title: "Template",
-		css: "index",
-		js: "index/index",
-		options: {
-			user: req.user,
-		},
-	});
-});
+app.get("/", setResParams("Template", ["index/index.less"], (req) => ({
+	user: req.user,
+})));
 
-app.get("/help", (req, res) => {
-	render(req, res, {
-		title: "Aide",
-		css: "help",
-		js: "help/help",
-		options: {
-			user: req.user,
-		},
-	});
-});
+app.get("/help", setResParams("Aide", ["help/help.less"], (req) => ({
+	user: req.user,
+})));
 
-app.get("/profile", notConnected, async (req, res) => {
-	const params = {
-		user: req.user,
-		projects: [],
-		url: req.path.split("/")[1],
-		settingsChanged: isInQuery(req, "settingsChanged"),
-	};
-
-	const projects = (await fs.readdir(`./files/${req.user.username}/projects`))
-		.map(name => name.slice(0, -8));
-
-	params.projects = projects;
-
-	render(req, res, {
-		title: "Profil",
-		css: "profile",
-		js: "profile/profile",
-		options: params,
-	});
-});
+app.get("/profile", notConnected, setResParams("Profil", ["profile/profile.less"], (async req => ({
+	user: req.user,
+	projects: (await fs.readdir(`./files/${req.user!.username}/projects`))
+		.map(name => name.slice(0, -8)),
+	url: req.path.split("/")[1],
+	settingsChanged: isInQuery(req, "settingsChanged"),
+}))));

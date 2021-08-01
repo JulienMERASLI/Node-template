@@ -4,12 +4,12 @@ import * as mongoose from "mongoose";
 const { Schema } = mongoose;
 
 export interface IUser extends mongoose.Document {
-	username?: string,
-	PW?: string,
-	email?: string,
+	username: string,
+	PW: string | undefined,
+	email: string,
 	resetPasswordToken?: string,
 	resetPasswordExpires?: Date | number,
-	isModified: (string) => boolean,
+	isModified: (s: string) => boolean,
 	save: () => Promise<this>,
 }
 
@@ -22,13 +22,13 @@ const UserSchema = new Schema({
 });
 
 UserSchema.pre("save", function (next) {
-	const user: IUser = this;
+	const user: IUser = this as IUser;
 
 	if (!user.isModified("PW")) return next();
 
 	bcrypt.genSalt(12)
 		.then(salt => {
-			bcrypt.hash(user.PW, salt)
+			bcrypt.hash(user.PW!, salt)
 				.then(hash => {
 					user.PW = hash;
 					next();

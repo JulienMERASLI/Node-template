@@ -1,3 +1,5 @@
+/// <reference path="./types/server.d.ts" />
+
 import * as express from "express";
 import "express-async-errors";
 export const app = express();
@@ -23,13 +25,9 @@ fs.mkdir(`${__dirname}/files/`).catch(err => {
 	if (err && (err.errno !== -17 && err.errno !== -4075)) console.error(err);
 });
 
-fs.mkdir(`${__dirname}/publicProjects/`).catch(err => {
-	if (err && (err.errno !== -17 && err.errno !== -4075)) console.error(err);
-});
-
-["log", "warn", "error", "dir"].forEach((methodName) => {
+(["log", "warn", "error"] as const).forEach((methodName) => {
 	const originalMethod = console[methodName];
-	console[methodName] = (...args) => {
+	console[methodName] = (...args: unknown[]) => {
 		let initiator = "unknown place";
 		try {
 			throw new Error();
@@ -66,9 +64,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 	.catch((err) => console.error(err));
 
 app.use(serveFavicon(`${__dirname}/public/favicon.ico`));
-app.use("/", express.static(path.join(__dirname, "/public/build/")));
 app.use(express.static(path.join(__dirname, "/public/")));
-app.set("view engine", "ejs");
 app.use(morgan("dev"));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
@@ -90,20 +86,16 @@ export const smtpTransport = nodemailer.createTransport({
 	},
 });
 
-const port = parseInt(process.env.PORT) || 8005;
-server.listen(port, () => console.log(`listening to port ${port}`));
+const port = parseInt(process.env.PORT || "8080");
 
 setInterval(() => {
 	nodeFetch("https://template.azurewebsites.net/").catch(err => err);
 }, 1000 * 60 * 10);
 
-import { notConnected } from "./controllers/helpers";
 import "./controllers/accountController";
 import "./controllers/mainController";
+import { createViteServer } from "./controllers/helpers";
 
-app.use(notConnected, (req, res, next) => {
-	req.session.messages.push("pageNotFound");
-	req.session.save();
-	res.redirect("/profile");
-	next();
-});
+createViteServer().then(() => (
+	server.listen(port, () => console.log(`listening to port ${port}`))
+));

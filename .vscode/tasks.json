@@ -3,30 +3,30 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "tscServer",
-			"problemMatcher": [],
-			"label": "npm: tscServer",
-			"detail": "tscServer",
-			"runOptions": {
-				"runOn": "folderOpen"
-			}
-		},
-		{
-			"type": "npm",
-			"script": "buildClient",
-			"problemMatcher": [],
-			"label": "npm: buildClient",
-			"detail": "buildClient",
-			"runOptions": {
-				"runOn": "folderOpen"
-			}
-		},
-		{
-			"type": "npm",
 			"script": "dev",
 			"problemMatcher": [],
 			"label": "npm: dev",
-			"detail": "dev",
+			"detail": "node server",
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
+		},
+		{
+			"type": "npm",
+			"script": "tscServer",
+			"problemMatcher": [],
+			"label": "npm: tscServer",
+			"detail": "ttsc -p tsconfig.server.json --watch",
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
+		},
+		{
+			"type": "npm",
+			"script": "tsc",
+			"problemMatcher": [],
+			"label": "npm: tsc",
+			"detail": "tsc --watch",
 			"runOptions": {
 				"runOn": "folderOpen"
 			}

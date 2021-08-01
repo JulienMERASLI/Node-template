@@ -1,11 +1,8 @@
 {
 	"extends": "./tsconfig.json",
-	"exclude": [
-		"public",
-		"types/shapes.d.ts",
-	],
 	"compilerOptions": {
-		"target": "es5",
-		"allowSyntheticDefaultImports": true,
+		"module": "CommonJS",
+		"noEmit": false
 	},
+	"include": ["server.ts", "prerender.ts"]
 }

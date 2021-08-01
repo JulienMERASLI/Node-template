@@ -1,23 +1,15 @@
-/// <reference path="../types/server.d.ts" />
-
 import * as passport from "passport";
 import * as bcrypt from "bcryptjs";
 import { app } from "../server";
 import { User } from "../models/accounts/userSchemaModel";
-import { alreadyConnected, notConnected, render } from "./helpers";
+import { alreadyConnected, notConnected, setResParams } from "./helpers";
 import "../models/accounts/passportModel";
 import { createFolders, createUser, validateForm } from "../models/accounts/registration";
 import { modifySettings } from "../models/accounts/modifySettings";
 import { assignNewPWAndRemoveToken, assignTokenToUser, generateToken, sendForgotPWMail, sendResetPWMail, userExists } from "../models/accounts/resetPW";
 
-app.get("/login", alreadyConnected, (req, res) => {
-	render(req, res, {
-		title: "Connexion",
-		css: "forms",
-		js: "forms/login",
-		options: {},
-	});
-});
+const formsCssFile = "forms/forms.less";
+app.get("/login", alreadyConnected, setResParams("Connexion", [formsCssFile]));
 
 app.post("/connected", (req, res, next) => {
 	if (!req.body.username) {
@@ -25,20 +17,13 @@ app.post("/connected", (req, res, next) => {
 		req.session.connectedWithEmail = true;
 	}
 	next();
-}, passport.authenticate("local", { failureRedirect: "/login", failureMessage: "wrongID" }), (req, res) => {
+}, passport.authenticate("local", { failureRedirect: "/login" }), (req, res) => {
 	const redirect = req.session.returnTo || "/profile";
 	delete req.session.returnTo;
 	res.redirect(redirect);
 });
 
-app.get("/register", alreadyConnected, (req, res) => {
-	render(req, res, {
-		title: "Inscription",
-		css: "forms",
-		js: "forms/register",
-		options: {},
-	});
-});
+app.get("/register", alreadyConnected, setResParams("Inscription", [formsCssFile]));
 
 app.post("/registered", async (req, res) => {
 	try {
@@ -68,22 +53,15 @@ app.get("/logout", (req, res) => {
 	res.redirect("/login");
 });
 
-app.get("/settings", notConnected, (req, res) => {
-	render(req, res, {
-		title: "Paramètres",
-		css: "forms",
-		js: "forms/settings",
-		options: {
-			user: req.user,
-		},
-	});
-});
+app.get("/settings", notConnected, setResParams("Paramètres", [formsCssFile], (req) => ({
+	user: req.user,
+})));
 
 app.patch("/settings", notConnected, async (req, res) => {
 	const oldUser = req.user;
 	const newUser = req.body;
 	try {
-		await modifySettings(oldUser, newUser);
+		await modifySettings(oldUser!, newUser);
 	} catch {
 		res.status(400).send();
 	}
@@ -94,19 +72,12 @@ app.patch("/settings", notConnected, async (req, res) => {
 
 app.post("/verifyPW", notConnected, async (req, res) => {
 	const { PW: formPW } = req.body;
-	const { PW: userPW } = req.user;
-	const samePW = await bcrypt.compare(formPW, userPW);
+	const { PW: userPW } = req.user!;
+	const samePW = await bcrypt.compare(formPW, userPW!);
 	res.status(200).send(samePW);
 });
 
-app.get("/forgotPW", alreadyConnected, (req, res) => {
-	render(req, res, {
-		title: "Mot de passe oublié",
-		css: "forms",
-		js: "forms/forgotPW",
-		options: {},
-	});
-});
+app.get("/forgotPW", alreadyConnected, setResParams("Mot de passe oublié", [formsCssFile]));
 
 app.post("/forgotPW", async (req, res) => {
 	try {
@@ -126,19 +97,16 @@ app.post("/forgotPW", async (req, res) => {
 	}
 });
 
-app.get("/resetPW/:token", alreadyConnected, async (req, res) => {
+app.get("/resetPW/:token", alreadyConnected, async (req, res, next) => {
 	const user = await User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }).exec();
 	if (!user) {
 		req.session.messages.push("invalidToken");
 		return res.redirect("/forgotPW");
 	}
-	render(req, res, {
-		title: "Réinitialisation du mot de passe",
-		css: "forms",
-		js: "forms/resetPW",
-		options: { token: req.params.token },
-	});
-});
+	next();
+}, setResParams("Réinitialisation du mot de passe", [formsCssFile], (req) => ({
+	token: req.params.token,
+})));
 
 app.post("/resetPW/:token", async (req, res) => {
 	if (req.body.PW.length < 4) {

@@ -2,11 +2,10 @@ import * as passportLocal from "passport-local";
 const { Strategy: LocalStrategy } = passportLocal;
 import * as passport from "passport";
 import * as bcrypt from "bcryptjs";
-import { Document } from "mongoose";
 import { User, IUser } from "./userSchemaModel";
 import { app } from "../../server";
 
-passport.serializeUser((user: Document, cb) => {
+passport.serializeUser((user, cb) => {
 	cb(null, user.id);
 });
 passport.deserializeUser((id, cb) => {
@@ -19,13 +18,15 @@ passport.use(new LocalStrategy({ usernameField: "username", passwordField: "PW",
 	function callback(users: IUser[]) {
 		const user = users[0];
 		if (!user) {
-			return cb(null, false, { message: "Incorrect username." });
+			req.session.messages.push("wrongUsername");
+			return cb(null, false);
 		}
-		bcrypt.compare(PW, user.PW).then(v => {
+		bcrypt.compare(PW, user.PW!).then(v => {
 			if (v) {
 				return cb(null, user);
 			}
-			return cb(null, false, { message: "Incorrect password." });
+			req.session.messages.push("wrongPassword");
+			return cb(null, false);
 		});
 	}
 	if (req.session.connectedWithEmail === true) {

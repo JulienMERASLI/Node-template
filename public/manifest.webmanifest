@@ -5,8 +5,13 @@
     "display": "standalone",
     "icons": [{
         "src": "/images/icon.png",
-        "sizes": "500x500",
+        "sizes": "512x512",
         "type": "image/png"
+    }, {
+        "src": "/images/maskable_icon.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
     }],
     "background_color": "black",
     "lang": "fr",

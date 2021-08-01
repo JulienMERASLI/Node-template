@@ -10,8 +10,9 @@ export async function modifySettings(oldUser: IUser, newUser: IUser): Promise<vo
 			await fs.rename(`./files/${oldUser.username}/`, `./files/${newUser.username}/`);
 		}
 	}
-	Object.keys(newUser).forEach(elem => {
-		oldUser[elem] = newUser[elem];
+
+	Object.keys(newUser).forEach((elem) => {
+		oldUser.set(elem, newUser.get(elem));
 	});
 	await oldUser.save();
 }

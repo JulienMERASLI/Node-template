@@ -10,7 +10,7 @@ export async function generateToken(): Promise<string> {
 	return buf.toString("hex");
 }
 
-export function userExists(user: IUser, req: Request): boolean {
+export function userExists(user: IUser | null, req: Request): user is IUser {
 	if (!user) {
 		req.session.messages.push("noUser");
 		req.session.save();
