@@ -1,0 +1,140 @@
+.no-user-select(@select: none) {
+    -webkit-touch-callout: @select;
+    -webkit-user-select: @select; 
+    -khtml-user-select: @select; 
+    -moz-user-select: @select;
+    -ms-user-select: @select; 
+    user-select: @select;    
+}
+
+.sticky() {
+    position: -webkit-sticky;
+    position: sticky;
+}
+
+@button-background: #3b01d9;
+
+* {
+    font-family: Nunito;
+}
+
+body {
+    margin: 0;
+
+    #loadingDiv {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        p {
+            text-align: center;
+        }
+    }
+
+    header {
+        background-color: #dcdcdca8;
+        display: flex;
+        .sticky();
+        top: 0;
+        @media (min-width: 640px) {
+            max-height: 10vh;
+        }
+        z-index: 2;
+
+        img {
+            width: 10vh;
+        }
+
+        h2 {
+            font-weight: normal;
+            margin: 0;
+        }
+
+        a {
+            font-size: medium;
+            margin-left: 10px;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: @button-background;
+            display: inline-block;
+            align-self: center;
+            outline: none;
+            @media (max-width: 700px) {
+                font-size: small;
+            }
+
+            &, &:visited {
+                color: white;
+                text-decoration: none;
+            }
+
+            &.image {
+                padding: 0;
+                margin: 0;
+                background: initial;
+                height: 10vh;
+            }
+        }
+
+        nav {
+            margin-left: auto;
+            width: 100%;
+
+            ul {
+                display: flex;
+                justify-content: flex-end;
+                list-style-type: none;
+                height: inherit;
+                padding-inline-start: 0;
+            }
+        }
+    }
+
+    .behindOverlay {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    .blue:extend(body header a) {
+        font-size: initial;
+    }
+
+    .error {
+        color: red;
+        animation-name: inAndOut;
+        animation-delay: 0s;
+        animation-iteration-count: 3;
+        animation-duration: 2s;
+    }
+
+    .warning {
+        color: #d9c301;
+    }
+
+    .information {
+        color: #01d925;
+        a {
+            color: inherit;
+        }
+    }
+
+    a, a:visited:not(.blue) {
+        color: black;
+    }
+}
+
+@keyframes inAndOut {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.2;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

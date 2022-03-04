@@ -1,0 +1,20 @@
+{
+    "name": "Template",
+    "short_name": "Template",
+    "start_url": "/?mode=standalone",
+    "display": "standalone",
+    "icons": [{
+        "src": "/images/icon.png",
+        "sizes": "512x512",
+        "type": "image/png"
+    }, {
+        "src": "/images/maskable_icon.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable"
+    }],
+    "background_color": "black",
+    "lang": "fr",
+    "theme_color": "white",
+    "orientation": "portrait"
+}
